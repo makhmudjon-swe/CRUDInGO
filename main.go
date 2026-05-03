@@ -3,7 +3,6 @@ package main
 import (
 	"database/sql"
 	"fmt"
-
 	_ "github.com/lib/pq"
 )
 
@@ -39,10 +38,28 @@ func main(){
     //     fmt.Println("User successfuly created!")
     // }
 
-    err = getUsers(db)
+    // err = getUsers(db)
+    // if err != nil {
+    //     fmt.Println(err.Error())
+    // }
+
+    // err = updateUser(db, "Jahongir", 23, 1)
+
+    // if err != nil {
+    //     fmt.Println(err.Error())
+    // }else{
+    //     fmt.Println("User successfuly updated")
+    // }
+
+    err = deleteUser(db,1)
+
     if err != nil {
         fmt.Println(err.Error())
+    }else{
+        fmt.Println("User successfuly deleted!")
     }
+
+
 }
 
 func createUser(db *sql.DB, name string, email string, age int) error{
@@ -97,6 +114,37 @@ func getUsers(db *sql.DB) error{
     }
 
     fmt.Println(users)
+
+    return nil
+}
+
+func updateUser(db *sql.DB, name string, age int, id int) error{
+    query := `
+    UPDATE users set 
+        name = $1,
+        age = $2 
+    where id = $3 
+    `
+    
+    _, err := db.Exec(query, name, age, id)
+
+    if err != nil {
+        return  err
+    }
+
+    return  nil
+}
+
+
+func deleteUser(db *sql.DB, id int) error{
+    query := `
+    Delete from users where id = $1;
+    `
+    _, err := db.Exec(query, id)
+
+    if err != nil {
+        return err
+    }
 
     return nil
 }
